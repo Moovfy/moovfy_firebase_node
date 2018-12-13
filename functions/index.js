@@ -28,28 +28,29 @@ exports.newMessageNotification = functions.database.ref('/messages/{roomID}/{mes
         }
         admin.database().ref('/users/' + uid).once('value').then(function(snapshot) {
             var token = snapshot.val().token;
-            var message2 = {
-                android: {
-                    ttl: 3600 * 1000, // 1 hour in milliseconds
-                    priority: 'normal',
-                    notification: {
-                        title: senderID,
-                        body: message.message,
-                        icon: '',
-                        color: '#f45342'
-                    }
-                },
-                token: token
-            };
+            admin.database().ref('/users/' + senderID).once('value').then(function(snapshot2) {
+                var message2 = {
+                    android: {
+                        ttl: 3600 * 1000, // 1 hour in milliseconds
+                        priority: 'normal',
+                        notification: {
+                            title: snapshot2.val().name,
+                            body: message.message,
+                            icon: '',
+                            color: '#f45342'
+                        }
+                    },
+                    token: token
+                };
 
-            admin.messaging().send(message2)
-                .then((response) => {
-                    // Response is a message ID string.
-                    console.log('Successfully sent message:', response);
-                })
-                .catch((error) => {
-                    console.log('Error sending message:', error);
-                });
-
+                admin.messaging().send(message2)
+                    .then((response) => {
+                        // Response is a message ID string.
+                        console.log('Successfully sent message:', response);
+                    })
+                    .catch((error) => {
+                        console.log('Error sending message:', error);
+                    });
+            });
         });
     });
