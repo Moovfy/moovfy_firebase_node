@@ -29,17 +29,34 @@ exports.newMessageNotification = functions.database.ref('/messages/{roomID}/{mes
         admin.database().ref('/users/' + uid).once('value').then(function(snapshot) {
             var token = snapshot.val().token;
             admin.database().ref('/users/' + senderID).once('value').then(function(snapshot2) {
-                var message2 = {
-                    android: {
-                        ttl: 3600 * 1000, // 1 hour in milliseconds
-                        priority: 'normal',
-                        notification: {
-                            title: snapshot2.val().name,
-                            body: message.message
-                        }
-                    },
-                    token: token
-                };
+                var message2;
+                if(message.message.substring(0,5) === "https") {
+                    message2 = {
+                        android: {
+                            ttl: 3600 * 1000, // 1 hour in milliseconds
+                            priority: 'normal',
+                            notification: {
+                                title: snapshot2.val().name,
+                                body: "Imagen"
+                            }
+                        },
+                        token: token
+                    };
+                }
+                else {
+                    message2 = {
+                        android: {
+                            ttl: 3600 * 1000, // 1 hour in milliseconds
+                            priority: 'normal',
+                            notification: {
+                                title: snapshot2.val().name,
+                                body: message.message
+                            }
+                        },
+                        token: token
+                    };
+                }
+
 
                 admin.messaging().send(message2)
                     .then((response) => {
