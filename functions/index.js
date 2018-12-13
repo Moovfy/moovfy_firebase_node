@@ -35,9 +35,7 @@ exports.newMessageNotification = functions.database.ref('/messages/{roomID}/{mes
                         priority: 'normal',
                         notification: {
                             title: snapshot2.val().name,
-                            body: message.message,
-                            icon: '',
-                            color: '#f45342'
+                            body: message.message
                         }
                     },
                     token: token
